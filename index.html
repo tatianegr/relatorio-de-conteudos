@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Relatório de Conteúdos — Tati Redatora</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap');
+
+    :root {
+      --bg: #0f0f13;
+      --surface: #17171e;
+      --surface2: #1d1d26;
+      --border: #2a2a36;
+      --accent: #b06aff;
+      --accent-soft: #7c3fcc22;
+      --text: #e4e2f0;
+      --muted: #7a7890;
+      --mono: 'IBM Plex Mono', monospace;
+      --sans: 'Inter', sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      min-height: 100vh;
+      padding: 2.5rem 1rem 4rem;
+    }
+
+    .container { max-width: 700px; margin: 0 auto; }
+
+    header { margin-bottom: 2.5rem; }
+    header h1 {
+      font-family: var(--mono);
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: var(--accent);
+      letter-spacing: 0.04em;
+      margin-bottom: 0.3rem;
+    }
+    header p { font-size: 0.82rem; color: var(--muted); }
+
+    /* META */
+    .meta-row { display: flex; gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap; }
+    .meta-field { flex: 1; min-width: 180px; }
+
+    label {
+      display: block;
+      font-size: 0.72rem;
+      font-family: var(--mono);
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 0.4rem;
+    }
+
+    input[type="text"], input[type="number"] {
+      width: 100%;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: var(--sans);
+      font-size: 0.9rem;
+      padding: 0.55rem 0.75rem;
+      border-radius: 6px;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    input[type="text"]:focus, input[type="number"]:focus { border-color: var(--accent); }
+    input[readonly] { color: var(--muted); cursor: default; }
+    input::placeholder { color: #3d3b4f; }
+
+    /* SECTION TITLE */
+    .section-title {
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 0.75rem;
+    }
+
+    /* ADD CLIENT ROW */
+    .add-client-row {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1.2rem;
+      align-items: flex-end;
+    }
+    .add-client-row .meta-field { flex: 1; margin: 0; }
+    .btn-add-client {
+      background: var(--accent-soft);
+      border: 1px dashed #5a3a8a;
+      color: var(--accent);
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      padding: 0 1.1rem;
+      height: 38px;
+      border-radius: 6px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.15s;
+      flex-shrink: 0;
+    }
+    .btn-add-client:hover { background: #7c3fcc33; border-color: var(--accent); }
+
+    /* CLIENT CARD */
+    .clients-list { display: flex; flex-direction: column; gap: 0.8rem; margin-bottom: 1.5rem; }
+
+    .client-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .client-header {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.65rem 0.9rem;
+      cursor: pointer;
+      user-select: none;
+      transition: background 0.12s;
+    }
+    .client-header:hover { background: #1f1f2a; }
+
+    .client-name-input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      color: var(--text);
+      font-family: var(--sans);
+      font-size: 0.93rem;
+      font-weight: 600;
+      outline: none;
+      padding: 0;
+      cursor: text;
+    }
+    .client-name-input:focus { color: var(--accent); }
+
+    .client-link-input {
+      flex: 1.2;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      padding: 0.3rem 0.6rem;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .client-link-input:focus { border-color: var(--accent); color: var(--text); }
+
+    .toggle-icon {
+      color: var(--muted);
+      font-size: 0.75rem;
+      transition: transform 0.2s;
+      flex-shrink: 0;
+    }
+    .client-card.open .toggle-icon { transform: rotate(180deg); }
+
+    .btn-remove-client {
+      background: none;
+      border: none;
+      color: var(--muted);
+      font-size: 1rem;
+      width: 26px;
+      height: 26px;
+      border-radius: 5px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: color 0.15s;
+    }
+    .btn-remove-client:hover { color: #ff6b6b; }
+
+    /* WORK TYPES PANEL */
+    .work-panel {
+      border-top: 1px solid var(--border);
+      padding: 0.9rem 1rem;
+      display: none;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .client-card.open .work-panel { display: flex; }
+
+    .work-type-row {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+    }
+
+    .work-checkbox {
+      appearance: none;
+      -webkit-appearance: none;
+      width: 16px;
+      height: 16px;
+      border: 1.5px solid var(--border);
+      border-radius: 4px;
+      cursor: pointer;
+      flex-shrink: 0;
+      position: relative;
+      transition: all 0.12s;
+    }
+    .work-checkbox:checked {
+      background: var(--accent);
+      border-color: var(--accent);
+    }
+    .work-checkbox:checked::after {
+      content: '✓';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: white;
+      font-size: 10px;
+      line-height: 1;
+    }
+
+    .work-tag {
+      font-size: 0.8rem;
+      font-weight: 500;
+      padding: 0.18rem 0.55rem;
+      border-radius: 20px;
+      white-space: nowrap;
+      flex-shrink: 0;
+      min-width: 130px;
+    }
+
+    .tag-seo         { background: #22c55e22; color: #4ade80; border: 1px solid #22c55e44; }
+    .tag-revisao     { background: #3b82f622; color: #60a5fa; border: 1px solid #3b82f644; }
+    .tag-reotimizacao{ background: #ef444422; color: #f87171; border: 1px solid #ef444444; }
+    .tag-layout      { background: #f59e0b22; color: #fbbf24; border: 1px solid #f59e0b44; }
+    .tag-news        { background: #06b6d422; color: #22d3ee; border: 1px solid #06b6d444; }
+    .tag-kw          { background: #78350f44; color: #d97706; border: 1px solid #92400e66; }
+    .tag-banner      { background: #ec489922; color: #f472b6; border: 1px solid #ec489944; }
+    .tag-artigo      { background: #8b5cf622; color: #a78bfa; border: 1px solid #8b5cf644; }
+    .tag-interno     { background: #0f766e22; color: #34d399; border: 1px solid #0f766e44; }
+
+    .work-qty-wrap {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.15s;
+      flex: 1;
+    }
+    .work-checkbox:checked ~ .work-tag ~ .work-qty-wrap,
+    .work-type-row.active .work-qty-wrap { opacity: 1; pointer-events: all; }
+
+    .work-qty {
+      width: 60px;
+      padding: 0.28rem 0.5rem;
+      font-size: 0.82rem;
+      border-radius: 5px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: var(--mono);
+      outline: none;
+      text-align: center;
+    }
+    .work-qty:focus { border-color: var(--accent); }
+
+    .work-qty-label {
+      font-size: 0.78rem;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    /* DIVIDER */
+    .divider { border: none; border-top: 1px solid var(--border); margin: 1.8rem 0; }
+
+    /* PREVIEW */
+    .preview-block {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.2rem 1.4rem;
+      margin-bottom: 1rem;
+    }
+    .preview-block pre {
+      font-family: var(--mono);
+      font-size: 0.82rem;
+      line-height: 1.7;
+      color: var(--text);
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    /* ACTIONS */
+    .actions { display: flex; gap: 0.75rem; }
+    .btn-copy {
+      flex: 1;
+      background: var(--accent);
+      border: none;
+      color: #fff;
+      font-family: var(--sans);
+      font-weight: 600;
+      font-size: 0.88rem;
+      padding: 0.65rem 1.2rem;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: opacity 0.15s;
+    }
+    .btn-copy:hover { opacity: 0.88; }
+    .btn-clear {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-family: var(--sans);
+      font-size: 0.85rem;
+      padding: 0.65rem 1.2rem;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: border-color 0.15s;
+    }
+    .btn-clear:hover { border-color: var(--muted); color: var(--text); }
+
+    /* TOAST */
+    .toast {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      background: var(--accent);
+      color: white;
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      padding: 0.55rem 1.1rem;
+      border-radius: 6px;
+      opacity: 0;
+      transform: translateY(6px);
+      transition: all 0.25s;
+      pointer-events: none;
+    }
+    .toast.show { opacity: 1; transform: translateY(0); }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <h1>relatório_de_conteúdos</h1>
+    <p>Adicione clientes, selecione os tipos de trabalho e copie o resultado.</p>
+  </header>
+
+  <div class="meta-row">
+    <div class="meta-field">
+      <label>Nome</label>
+      <input type="text" id="nome" value="Tatiane Gomes" readonly />
+    </div>
+    <div class="meta-field">
+      <label>Data</label>
+      <input type="text" id="data" oninput="updatePreview()" />
+    </div>
+  </div>
+
+  <div class="section-title">Conteúdos</div>
+
+  <div class="add-client-row">
+    <div class="meta-field">
+      <label>Nome do cliente</label>
+      <input type="text" id="new-client-name" placeholder="ex: Reverlux" onkeydown="if(event.key==='Enter') addClient()" />
+    </div>
+    <button class="btn-add-client" onclick="addClient()">+ Adicionar</button>
+  </div>
+
+  <div class="clients-list" id="clients-list"></div>
+
+  <hr class="divider" />
+
+  <div class="section-title">Prévia</div>
+  <div class="preview-block"><pre id="preview">(nenhum cliente adicionado)</pre></div>
+
+  <div class="actions">
+    <button class="btn-copy" onclick="copyResult()">Copiar resultado</button>
+    <button class="btn-clear" onclick="clearAll()">Limpar tudo</button>
+  </div>
+
+</div>
+
+<div class="toast" id="toast">Copiado!</div>
+
+<script>
+  // ── Data ────────────────────────────────────────────
+  function getToday() {
+    const n = new Date();
+    const d = String(n.getDate()).padStart(2,'0');
+    const m = String(n.getMonth()+1).padStart(2,'0');
+    const y = String(n.getFullYear()).slice(2);
+    return `${d}/${m}/${y}`;
+  }
+  document.getElementById('data').value = getToday();
+
+  // ── Work types config ────────────────────────────────
+  const WORK_TYPES = [
+    { id: 'seo',          label: 'SEO',                  tag: 'tag-seo',          unit: 'páginas SEO' },
+    { id: 'revisao',      label: 'Site revisão',          tag: 'tag-revisao',      unit: 'páginas revisadas' },
+    { id: 'reotimizacao', label: 'Reotimização SEO',      tag: 'tag-reotimizacao', unit: 'reotimizações' },
+    { id: 'layout',       label: 'Layout',                tag: 'tag-layout',       unit: 'páginas de layout' },
+    { id: 'news',         label: 'News',                  tag: 'tag-news',         unit: 'newsletters' },
+    { id: 'kw',           label: 'Levantamento de KW',    tag: 'tag-kw',           unit: 'levantamentos de KW' },
+    { id: 'banner',       label: 'Banners',               tag: 'tag-banner',       unit: 'banners' },
+    { id: 'artigo',       label: 'Artigo',                tag: 'tag-artigo',       unit: 'artigos' },
+    { id: 'interno',      label: 'Conteúdo Interno',      tag: 'tag-interno',      unit: 'conteúdos internos' },
+  ];
+
+  let clientCounter = 0;
+  const clients = {}; // id → { name, link, checks: { typeId: qty } }
+
+  // ── Add client ───────────────────────────────────────
+  function addClient() {
+    const nameInput = document.getElementById('new-client-name');
+    const name = nameInput.value.trim();
+    if (!name) { nameInput.focus(); return; }
+
+    const id = clientCounter++;
+    clients[id] = { name, link: '', checks: {} };
+
+    const card = document.createElement('div');
+    card.className = 'client-card open';
+    card.dataset.id = id;
+
+    // Build work type rows HTML
+    const rowsHtml = WORK_TYPES.map(t => `
+      <div class="work-type-row" data-type="${t.id}">
+        <input type="checkbox" class="work-checkbox"
+          onchange="toggleType(${id}, '${t.id}', this.checked); updatePreview()"
+          id="chk-${id}-${t.id}" />
+        <label for="chk-${id}-${t.id}" class="work-tag ${t.tag}" style="cursor:pointer">${t.label}</label>
+        <div class="work-qty-wrap">
+          <input type="number" class="work-qty" min="1" value="1"
+            oninput="setQty(${id}, '${t.id}', this.value); updatePreview()"
+            placeholder="0" />
+          <span class="work-qty-label">${t.unit}</span>
+        </div>
+      </div>
+    `).join('');
+
+    card.innerHTML = `
+      <div class="client-header" onclick="toggleCard(${id})">
+        <input type="text" class="client-name-input" value="${name}"
+          onclick="event.stopPropagation()"
+          oninput="clients[${id}].name=this.value; updatePreview()" />
+        <input type="text" class="client-link-input" placeholder="https://link-do-job (opcional)"
+          onclick="event.stopPropagation()"
+          oninput="clients[${id}].link=this.value; updatePreview()" />
+        <span class="toggle-icon">▾</span>
+        <button class="btn-remove-client" onclick="event.stopPropagation(); removeClient(${id})" title="Remover cliente">×</button>
+      </div>
+      <div class="work-panel">${rowsHtml}</div>
+    `;
+
+    document.getElementById('clients-list').appendChild(card);
+    nameInput.value = '';
+    nameInput.focus();
+    updatePreview();
+  }
+
+  function toggleCard(id) {
+    const card = document.querySelector(`.client-card[data-id="${id}"]`);
+    if (card) card.classList.toggle('open');
+  }
+
+  function removeClient(id) {
+    delete clients[id];
+    const card = document.querySelector(`.client-card[data-id="${id}"]`);
+    if (card) card.remove();
+    updatePreview();
+  }
+
+  function toggleType(clientId, typeId, checked) {
+    if (!clients[clientId]) return;
+    if (checked) {
+      clients[clientId].checks[typeId] = clients[clientId].checks[typeId] || 1;
+    } else {
+      delete clients[clientId].checks[typeId];
+    }
+    // Show/hide qty visually via the checkbox state (CSS handles it)
+  }
+
+  function setQty(clientId, typeId, val) {
+    if (!clients[clientId]) return;
+    const n = parseInt(val);
+    if (!isNaN(n) && n > 0) clients[clientId].checks[typeId] = n;
+  }
+
+  // ── Preview ──────────────────────────────────────────
+  function updatePreview() {
+    const nome = document.getElementById('nome').value;
+    const data = document.getElementById('data').value;
+
+    // Collect live data from DOM for qty fields
+    document.querySelectorAll('.client-card').forEach(card => {
+      const cid = parseInt(card.dataset.id);
+      if (!clients[cid]) return;
+      card.querySelectorAll('.work-type-row').forEach(row => {
+        const tid = row.dataset.type;
+        const chk = row.querySelector('.work-checkbox');
+        const qty = row.querySelector('.work-qty');
+        if (chk && chk.checked && qty) {
+          const n = parseInt(qty.value);
+          clients[cid].checks[tid] = (!isNaN(n) && n > 0) ? n : 1;
+        }
+      });
+    });
+
+    let lines = [];
+    Object.entries(clients).forEach(([id, c]) => {
+      const activeTypes = Object.entries(c.checks);
+      if (activeTypes.length === 0) return;
+
+      const parts = activeTypes.map(([tid, qty]) => {
+        const t = WORK_TYPES.find(x => x.id === tid);
+        return t ? `${qty} ${t.unit}` : '';
+      }).filter(Boolean);
+
+      const desc = `${c.name}: ${parts.join(' + ')}`;
+      lines.push(c.link ? `${desc} - ${c.link}` : desc);
+    });
+
+    let text = `Nome: ${nome}\n\nData: ${data}\n\nConteúdos:\n\n`;
+    text += lines.length ? lines.join('\n') : '(nenhum item adicionado)';
+
+    document.getElementById('preview').textContent = text;
+  }
+
+  function copyResult() {
+    const text = document.getElementById('preview').textContent;
+    if (text.includes('(nenhum')) return;
+    navigator.clipboard.writeText(text).then(() => {
+      const t = document.getElementById('toast');
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2000);
+    });
+  }
+
+  function clearAll() {
+    document.getElementById('clients-list').innerHTML = '';
+    Object.keys(clients).forEach(k => delete clients[k]);
+    clientCounter = 0;
+    updatePreview();
+  }
+
+  updatePreview();
+</script>
+</body>
+</html>
