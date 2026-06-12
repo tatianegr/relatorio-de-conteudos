@@ -407,7 +407,7 @@
     { id: 'reotimizacao', label: 'Reotimização SEO',      tag: 'tag-reotimizacao', unit: 'reotimizações' },
     { id: 'layout',       label: 'Layout',                tag: 'tag-layout',       unit: 'páginas de layout' },
     { id: 'news',         label: 'News',                  tag: 'tag-news',         unit: 'newsletters' },
-    { id: 'kw',           label: 'Levantamento de KW',    tag: 'tag-kw',           unit: 'levantamentos de KW' },
+    { id: 'kw',           label: 'Levantamento de KW',    tag: 'tag-kw',           unit: 'levantamentos de KW', format: qty => `Levantamento de ${qty} palavras-chave` },
     { id: 'banner',       label: 'Banners',               tag: 'tag-banner',       unit: 'banners' },
     { id: 'artigo',       label: 'Artigo',                tag: 'tag-artigo',       unit: 'artigos' },
     { id: 'interno',      label: 'Conteúdo Interno',      tag: 'tag-interno',      unit: 'conteúdos internos' },
@@ -520,7 +520,8 @@
 
       const parts = activeTypes.map(([tid, qty]) => {
         const t = WORK_TYPES.find(x => x.id === tid);
-        return t ? `${qty} ${t.unit}` : '';
+        if (!t) return '';
+        return t.format ? t.format(qty) : `${qty} ${t.unit}`;
       }).filter(Boolean);
 
       const desc = `${c.name}: ${parts.join(' + ')}`;
