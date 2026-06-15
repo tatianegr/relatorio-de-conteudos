@@ -402,15 +402,15 @@
 
   // ── Work types config ────────────────────────────────
   const WORK_TYPES = [
-    { id: 'seo',          label: 'SEO',                  tag: 'tag-seo',          unit: 'páginas SEO' },
-    { id: 'revisao',      label: 'Site revisão',          tag: 'tag-revisao',      unit: 'páginas revisadas' },
-    { id: 'reotimizacao', label: 'Reotimização SEO',      tag: 'tag-reotimizacao', unit: 'reotimizações' },
-    { id: 'layout',       label: 'Layout',                tag: 'tag-layout',       unit: 'páginas de layout' },
-    { id: 'news',         label: 'News',                  tag: 'tag-news',         unit: 'newsletters' },
+    { id: 'seo',          label: 'SEO',                  tag: 'tag-seo',          unit: 'páginas SEO',        unitSingular: 'página SEO' },
+    { id: 'revisao',      label: 'Site revisão',          tag: 'tag-revisao',      unit: 'páginas revisadas',  unitSingular: 'página revisada' },
+    { id: 'reotimizacao', label: 'Reotimização SEO',      tag: 'tag-reotimizacao', unit: 'reotimizações',      unitSingular: 'reotimização' },
+    { id: 'layout',       label: 'Layout',                tag: 'tag-layout',       unit: 'páginas de layout',  unitSingular: 'página de layout' },
+    { id: 'news',         label: 'News',                  tag: 'tag-news',         unit: 'newsletters',        unitSingular: 'newsletter' },
     { id: 'kw',           label: 'Levantamento de KW',    tag: 'tag-kw',           unit: 'levantamentos de KW', format: qty => `Levantamento de ${qty} palavras-chave` },
-    { id: 'banner',       label: 'Banners',               tag: 'tag-banner',       unit: 'banners' },
-    { id: 'artigo',       label: 'Artigo',                tag: 'tag-artigo',       unit: 'artigos' },
-    { id: 'interno',      label: 'Conteúdo Interno',      tag: 'tag-interno',      unit: 'conteúdos internos' },
+    { id: 'banner',       label: 'Banners',               tag: 'tag-banner',       unit: 'banners',            unitSingular: 'banner' },
+    { id: 'artigo',       label: 'Artigo',                tag: 'tag-artigo',       unit: 'artigos',            unitSingular: 'artigo' },
+    { id: 'interno',      label: 'Conteúdo Interno',      tag: 'tag-interno',      unit: 'conteúdos internos', unitSingular: 'conteúdo interno' },
   ];
 
   let clientCounter = 0;
@@ -521,7 +521,9 @@
       const parts = activeTypes.map(([tid, qty]) => {
         const t = WORK_TYPES.find(x => x.id === tid);
         if (!t) return '';
-        return t.format ? t.format(qty) : `${qty} ${t.unit}`;
+        if (t.format) return t.format(qty);
+        const unit = (qty === 1 && t.unitSingular) ? t.unitSingular : t.unit;
+        return `${qty} ${unit}`;
       }).filter(Boolean);
 
       const desc = `${c.name}: ${parts.join(' + ')}`;
