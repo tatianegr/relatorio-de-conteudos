@@ -414,43 +414,45 @@
   ];
 
   let clientCounter = 0;
-  const clients = {}; // id → { name, link, checks: { typeId: qty } }
+  const clients = {}; // id → { name, link, checks: { typeId: qty }, open }
+  const STORAGE_KEY = 'relatorioConteudosState';
 
-  // ── Add client ───────────────────────────────────────
-  function addClient() {
-    const nameInput = document.getElementById('new-client-name');
-    const name = nameInput.value.trim();
-    if (!name) { nameInput.focus(); return; }
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
 
-    const id = clientCounter++;
-    clients[id] = { name, link: '', checks: {} };
-
+  // ── Render client card ────────────────────────────────
+  function renderClientCard(id, data) {
     const card = document.createElement('div');
-    card.className = 'client-card open';
+    card.className = 'client-card' + (data.open === false ? '' : ' open');
     card.dataset.id = id;
 
-    // Build work type rows HTML
-    const rowsHtml = WORK_TYPES.map(t => `
+    const rowsHtml = WORK_TYPES.map(t => {
+      const qty = data.checks[t.id];
+      const checked = qty ? 'checked' : '';
+      const qtyVal = qty || 1;
+      return `
       <div class="work-type-row" data-type="${t.id}">
-        <input type="checkbox" class="work-checkbox"
+        <input type="checkbox" class="work-checkbox" ${checked}
           onchange="toggleType(${id}, '${t.id}', this.checked); updatePreview()"
           id="chk-${id}-${t.id}" />
         <label for="chk-${id}-${t.id}" class="work-tag ${t.tag}" style="cursor:pointer">${t.label}</label>
         <div class="work-qty-wrap">
-          <input type="number" class="work-qty" min="1" value="1"
+          <input type="number" class="work-qty" min="1" value="${qtyVal}"
             oninput="setQty(${id}, '${t.id}', this.value); updatePreview()"
             placeholder="0" />
           <span class="work-qty-label">${t.unit}</span>
         </div>
       </div>
-    `).join('');
+    `;
+    }).join('');
 
     card.innerHTML = `
       <div class="client-header" onclick="toggleCard(${id})">
-        <input type="text" class="client-name-input" value="${name}"
+        <input type="text" class="client-name-input" value="${escapeHtml(data.name)}"
           onclick="event.stopPropagation()"
           oninput="clients[${id}].name=this.value; updatePreview()" />
-        <input type="text" class="client-link-input" placeholder="https://link-do-job (opcional)"
+        <input type="text" class="client-link-input" placeholder="https://link-do-job (opcional)" value="${escapeHtml(data.link || '')}"
           onclick="event.stopPropagation()"
           oninput="clients[${id}].link=this.value; updatePreview()" />
         <span class="toggle-icon">▾</span>
@@ -460,6 +462,18 @@
     `;
 
     document.getElementById('clients-list').appendChild(card);
+  }
+
+  // ── Add client ───────────────────────────────────────
+  function addClient() {
+    const nameInput = document.getElementById('new-client-name');
+    const name = nameInput.value.trim();
+    if (!name) { nameInput.focus(); return; }
+
+    const id = clientCounter++;
+    clients[id] = { name, link: '', checks: {}, open: true };
+    renderClientCard(id, clients[id]);
+
     nameInput.value = '';
     nameInput.focus();
     updatePreview();
@@ -467,7 +481,10 @@
 
   function toggleCard(id) {
     const card = document.querySelector(`.client-card[data-id="${id}"]`);
-    if (card) card.classList.toggle('open');
+    if (!card) return;
+    card.classList.toggle('open');
+    if (clients[id]) clients[id].open = card.classList.contains('open');
+    saveState();
   }
 
   function removeClient(id) {
@@ -534,6 +551,32 @@
     text += lines.length ? lines.join('\n') : '(nenhum item adicionado)';
 
     document.getElementById('preview').textContent = text;
+    saveState();
+  }
+
+  // ── Persistence ──────────────────────────────────────
+  function saveState() {
+    const state = {
+      date: document.getElementById('data').value,
+      clientCounter,
+      clients
+    };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  }
+
+  function loadState() {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return false;
+    let state;
+    try { state = JSON.parse(raw); } catch (e) { return false; }
+
+    if (state.date) document.getElementById('data').value = state.date;
+    clientCounter = state.clientCounter || 0;
+    Object.entries(state.clients || {}).forEach(([id, data]) => {
+      clients[id] = data;
+      renderClientCard(id, data);
+    });
+    return true;
   }
 
   function copyResult() {
@@ -550,9 +593,11 @@
     document.getElementById('clients-list').innerHTML = '';
     Object.keys(clients).forEach(k => delete clients[k]);
     clientCounter = 0;
+    localStorage.removeItem(STORAGE_KEY);
     updatePreview();
   }
 
+  loadState();
   updatePreview();
 </script>
 </body>
