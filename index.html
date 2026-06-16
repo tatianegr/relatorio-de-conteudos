@@ -570,6 +570,11 @@
     let state;
     try { state = JSON.parse(raw); } catch (e) { return false; }
 
+    if (state.date && state.date !== getToday()) {
+      localStorage.removeItem(STORAGE_KEY);
+      return false;
+    }
+
     if (state.date) document.getElementById('data').value = state.date;
     clientCounter = state.clientCounter || 0;
     Object.entries(state.clients || {}).forEach(([id, data]) => {
@@ -601,6 +606,7 @@
     const now = new Date();
     const nextMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
     setTimeout(() => {
+      clearAll();
       document.getElementById('data').value = getToday();
       updatePreview();
       scheduleMidnightRefresh();
