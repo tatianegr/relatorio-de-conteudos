@@ -244,6 +244,7 @@
     .tag-artigo      { background: #8b5cf622; color: #a78bfa; border: 1px solid #8b5cf644; }
     .tag-interno     { background: #0f766e22; color: #34d399; border: 1px solid #0f766e44; }
     .tag-refacao     { background: #f9731622; color: #fb923c; border: 1px solid #f9731644; }
+    .tag-manual      { background: #6366f122; color: #818cf8; border: 1px solid #6366f144; }
 
     .work-qty-wrap {
       display: flex;
@@ -408,11 +409,12 @@
     { id: 'reotimizacao', label: 'Reotimização SEO',      tag: 'tag-reotimizacao', unit: 'reotimizações',      unitSingular: 'reotimização' },
     { id: 'layout',       label: 'Layout',                tag: 'tag-layout',       unit: 'páginas de layout',  unitSingular: 'página de layout', format: qty => `Conteúdo para ${qty} ${qty === 1 ? 'página de layout' : 'páginas de layout'}` },
     { id: 'news',         label: 'News',                  tag: 'tag-news',         unit: 'conteúdos para arte', unitSingular: 'conteúdo para arte' },
-    { id: 'kw',           label: 'Levantamento de KW',    tag: 'tag-kw',           unit: 'levantamentos de KW', format: qty => `Levantamento de ${qty} palavras-chave` },
+    { id: 'kw',           label: 'Levantamento de KW',    tag: 'tag-kw',           unit: 'levantamentos de KW', format: qty => `Levantamento de ${qty} ${qty === 1 ? 'palavra-chave' : 'palavras-chave'}` },
     { id: 'banner',       label: 'Banners',               tag: 'tag-banner',       unit: 'banners',            unitSingular: 'banner' },
     { id: 'artigo',       label: 'Artigo',                tag: 'tag-artigo',       unit: 'artigos',            unitSingular: 'artigo' },
     { id: 'interno',      label: 'Conteúdo Interno',      tag: 'tag-interno',      unit: 'conteúdos internos', unitSingular: 'conteúdo interno' },
     { id: 'refacao',      label: 'Refação',               tag: 'tag-refacao',      unit: 'ajustes de conteúdo', unitSingular: 'ajuste de conteúdo' },
+    { id: 'manual',       label: 'Manual de Conteúdo',    tag: 'tag-manual',       unit: 'manual de conteúdo',  unitSingular: 'manual de conteúdo' },
   ];
 
   let clientCounter = 0;
