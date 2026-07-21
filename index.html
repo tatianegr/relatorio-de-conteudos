@@ -245,7 +245,8 @@
     .tag-interno     { background: #0f766e22; color: #34d399; border: 1px solid #0f766e44; }
     .tag-refacao     { background: #f9731622; color: #fb923c; border: 1px solid #f9731644; }
     .tag-manual      { background: #6366f122; color: #818cf8; border: 1px solid #6366f144; }
-    .tag-landing     { background: #0ea5e922; color: #38bdf8; border: 1px solid #0ea5e944; }
+    .tag-landing        { background: #0ea5e922; color: #38bdf8; border: 1px solid #0ea5e944; }
+    .tag-monitoramento  { background: #84cc1622; color: #a3e635; border: 1px solid #84cc1644; }
 
     .work-qty-wrap {
       display: flex;
@@ -416,7 +417,8 @@
     { id: 'interno',      label: 'Conteúdo Interno',      tag: 'tag-interno',      unit: 'conteúdos internos', unitSingular: 'conteúdo interno' },
     { id: 'refacao',      label: 'Refação',               tag: 'tag-refacao',      unit: 'ajustes de conteúdo', unitSingular: 'ajuste de conteúdo' },
     { id: 'manual',       label: 'Manual de Conteúdo',    tag: 'tag-manual',       unit: 'manual de conteúdo',  unitSingular: 'manual de conteúdo' },
-    { id: 'landing',      label: 'Landing Page',          tag: 'tag-landing',      unit: 'conteúdos para landing page', format: qty => `${qty} ${qty === 1 ? 'conteúdo para landing page' : 'conteúdos para landing page'}` },
+    { id: 'landing',        label: 'Landing Page',          tag: 'tag-landing',        unit: 'conteúdos para landing page', format: qty => `${qty} ${qty === 1 ? 'conteúdo para landing page' : 'conteúdos para landing page'}` },
+    { id: 'monitoramento',  label: 'Monitoramento',         tag: 'tag-monitoramento',  unit: 'relatórios de monitoramento', unitSingular: 'relatório de monitoramento' },
   ];
 
   let clientCounter = 0;
